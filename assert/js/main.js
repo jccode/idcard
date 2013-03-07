@@ -76,6 +76,12 @@ define(function(require, exports, module) {
 		return (n+"").length == 1 ? "0"+n : n;
 	}
 
+	function queryInfo () {
+		var num = $("#txt_idcard").val();
+		var msg = IC.parseWithMsg(num);
+		showResult("ret_query", msg);
+	}
+
 	function genIdCard () {
 		var birthday = $("#year").val() + twoBit($("#month").val()) + twoBit($("#day").val());
 		var sex = $("input[name='sex']:radio:checked").val();
@@ -89,7 +95,13 @@ define(function(require, exports, module) {
 	}
 
 	function genRandIdCard () {
-		showResult("ret_rnd", ""+IC.genCheckCode('11010120130101060'));
+		var ret = IC.rndGenIdCardFull();
+		var msg = " 生成号码为: ${cardNum}<br> 出生地: ${birthplace}<br> 生日: ${birthday}<br> 性别: ${sex}"
+			.replace("${cardNum}", ret.cardNum)
+			.replace("${birthplace}", ret.birthplace)
+			.replace("${birthday}", ret.birthday)
+			.replace("${sex}", {"0":"女", "1":"男"}[ret.sex]);
+		showResult("ret_rnd", msg);
 	}
 
 	function init_event () {
@@ -102,6 +114,8 @@ define(function(require, exports, module) {
 		$(".alert .close").click(function () {
 			$(this).closest(".alert").addClass("hide");
 		});
+
+		$("#query").click(queryInfo);
 	}
 
 	function init_options () {

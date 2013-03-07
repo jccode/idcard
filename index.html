@@ -14,34 +14,43 @@
 	<div class="container">
 		<!-- <h1>身份证生成程序</h1> -->
 
-		<!-- <form action=""> -->
+		<p>
+			省份/直辖市: <select name="" id="province"></select>
+			城市: <select name="" id="city"></select>
+			县级市/区: <select name="" id="town"></select>
+		</p>
+		<p>
+			年: <select name="" id="year"></select>
+			月: <select name="" id="month"></select>
+			日: <select name="" id="day"></select>
+		</p>
+		<p>
+			<label class="radio inline"><input type="radio" name="sex" value="1" checked>男</label>
+			<label class="radio inline"><input type="radio" name="sex" value="0">女</label>
+		</p>
+		<p>
+			<button id="gen" class="btn btn-primary btn-large">生成</button>
+			<div id="ret" class="alert alert-info alert-block hide">
+				<button type="button" class="close" data-dismiss="alert">&times;</button>
+				<div>alert-block</div>
+			</div>
+		</p>
 
-			<p>
-				省份/直辖市: <select name="" id="province"></select>
-				城市: <select name="" id="city"></select>
-				县级市/区: <select name="" id="town"></select>
-			</p>
-			<p>
-				年: <select name="" id="year"></select>
-				月: <select name="" id="month"></select>
-				日: <select name="" id="day"></select>
-			</p>
-			<p>
-				<label class="radio inline"><input type="radio" name="sex" value="1">男</label>
-				<label class="radio inline"><input type="radio" name="sex" value="0">女</label>
-			</p>
-			<p>
-				<button id="gen" class="btn btn-primary btn-large">生成</button>
-				<div id="ret" class="alert alert-info alert-block hide">
-					<button type="button" class="close" data-dismiss="alert">&times;</button>
-					<div>alert-block</div>
-				</div>
-			</p>
-		<!-- </form> -->
 
 		<p>
 			随机生成身份证号码：<button id="gen_rnd" class="btn btn-primary btn-large">随机生成</button>
 			<div id="ret_rnd" class="alert alert-info alert-block hide">
+				<button type="button" class="close" data-dismiss="alert">&times;</button>
+				<div>alert-block</div>
+			</div>
+		</p>
+
+
+		<p>
+			身份证号码信息查询: 
+			<input type="text" id="txt_idcard" placeholder="输入身份证号码">
+			<button id="query" class="btn btn-primary">查询</button>
+			<div id="ret_query" class="alert alert-info alert-block hide">
 				<button type="button" class="close" data-dismiss="alert">&times;</button>
 				<div>alert-block</div>
 			</div>
@@ -51,4 +60,4 @@
 
 	<script src="assert/seajs/sea.js" data-config="js/config" data-main="js/main"></script>
 </body>
-</html
+</html>

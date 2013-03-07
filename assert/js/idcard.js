@@ -130,13 +130,30 @@ function getLevel3Nodes (code) {
 	return [];
 }
 
+function getNodeNameByCode (code) {
+	var tmp = _city.split(";");
+	for (var i = tmp.length - 1; i >= 0; i--) {
+		if(tmp[i].indexOf(code) >= 0) {
+			return tmp[i].split(",")[1];
+		}
+	}
+	return "";
+}
+
+/**
+ * generate the specified range of random integer. range: [m, n]
+ */
 function rand (m, n) {
-	return Math.ceil(m + Math.random()*(n-m));
+	return Math.round(m + Math.random()*(n-m));
 }
 
 function assert (condition, msg) {
 	if(!condition)
 		throw msg;
+}
+
+function twobit (n) {
+	return (n+"").length === 1 ? "0"+n : n+"";
 }
 
 /**
@@ -155,6 +172,9 @@ function getSeqNum (sex) {
 	return ret.length==3 ? ret : (ret.length==2 ? "0"+ret : "00"+ret);
 }
 
+/**
+ * 17 bit
+ */
 function genCheckCode (num) {
 	var a = num.split(""), 
 		w = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2], 
@@ -166,16 +186,114 @@ function genCheckCode (num) {
 	return mapper[sum % 11];
 }
 
+/**
+ * Generate IdCard Number
+ * @param  {[type]} code     [description]
+ * @param  {[type]} birthday [description]
+ * @param  {[type]} sex      [description]
+ * @return {[type]}          [description]
+ */
 function genIdCard (code, birthday, sex) {
 	var s = code + birthday + getSeqNum(sex), 
 		checkCode = genCheckCode(s);
 	return s + checkCode;
 }
 
+/**
+ * Random generate IdCard Number with full msg
+ * @return {[type]} [description]
+ */
+function rndGenIdCardFull () {
+	var currYear = new Date().getFullYear();
+
+	//random birthday
+	var year = rand(currYear-90, currYear), 
+		month = rand(0, 11), 
+		day = rand(1, new Date(year, month+1, 0).getDate());
+	var birthday = year + twobit(month) + twobit(day);
+
+	//random code
+	var citys = _city.split(";"), 
+		c = citys[rand(0, citys.length-1)], 
+		t = c.split(",");
+	var name = t[1], code = t[0];
+	// full birthplace name
+	var birthplace = parseBirthplace(code);
+
+	//random sex
+	var sex = rand(0, 1);
+
+	return {
+		"cardNum": genIdCard(code, birthday, sex), 
+		"birthplace": birthplace, 
+		"birthday": birthday, 
+		"sex": sex
+	};
+}
+
+/**
+ * Random generate IdCard Number
+ * @return {[type]} [description]
+ */
+function rndGenIdCard () {
+	return rndGenIdCardFull()['cardNum'];
+}
+
+/**
+ * 6 bit code
+ */
+function parseBirthplace (code) {
+	var province = "", city = "", name = getNodeNameByCode(code);
+	if(code.indexOf("0000",2) !== 2) {
+		province = getNodeNameByCode(code.substring(0, 2)+"0000") + " ";
+		if(code.indexOf("00",4) !== 4) {
+			city = getNodeNameByCode(code.substring(0, 4)+"00") + " ";
+		}
+	}
+	return province + city + name;
+}
+
+/**
+ * 18 bit code
+ */
+function parse (idCard) {
+	var code = idCard.substring(0, 6), 
+		birthday = idCard.substring(6, 14), 
+		seqNum = idCard.substring(14, 17), 
+		checkCode = idCard.substring(17);
+	if(genCheckCode(code + birthday + seqNum) !== checkCode) {
+		return false;
+	} 
+	return {
+		"birthplace": parseBirthplace(code), 
+		"birthday": birthday, 
+		"sex": seqNum % 2
+	};
+}
+
+function parseWithMsg (idCard) {
+	var ret = parse(idCard);
+	if(!ret) {
+		return "身份证号码不合法";
+	} else {
+		var msg = " 出生地: ${birthplace}<br> 生日: ${birthday}<br> 性别: ${sex}"
+			.replace("${birthplace}", ret.birthplace)
+			.replace("${birthday}", ret.birthday)
+			.replace("${sex}", {"0":"女", "1":"男"}[ret.sex]);
+		return msg;
+	}
+}
+
+exports.getNodeNameByCode = getNodeNameByCode;
 exports.getLevel2Nodes = getLevel2Nodes;
 exports.getLevel3Nodes = getLevel3Nodes;
-exports.genIdCard = genIdCard;
 exports.genCheckCode = genCheckCode;
+exports.genIdCard = genIdCard;
+exports.rndGenIdCard = rndGenIdCard;
+exports.rndGenIdCardFull = rndGenIdCardFull;
+exports.parseBirthplace = parseBirthplace;
+exports.parse = parse;
+exports.parseWithMsg = parseWithMsg;
 exports.getData = function() {
 	return citys;
 }
