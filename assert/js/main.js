@@ -6,11 +6,11 @@ define(function(require, exports, module) {
 	var tpl = "<option value='${val}'>${name}</option>";
 
 
-	function init_year() {
+	function init_year(age) {
 		var currYear = new Date().getFullYear(), 
 			year, html;
 
-		for(var i = 0; i < 90; i++) {
+		for(var i = 0; i <= age; i++) {
 			year = currYear - i;
 			html += tpl.replace("${val}", year).replace("${name}", year);
 		}
@@ -25,6 +25,14 @@ define(function(require, exports, module) {
 		$("#month").append(html);
 	}
 
+	function init_age(age) {
+		var html;
+		for(var i = 0; i <= age; i++) {
+			html += tpl.replace("${val}", i).replace("${name}", i);
+		}
+		$("#age").append(html);
+	}
+
 	function loadDate() {
 		var year = $("#year").val(), 
 			month = $("#month").val(), 
@@ -35,6 +43,18 @@ define(function(require, exports, module) {
 			html += tpl.replace("${val}", i).replace("${name}", i);
 		}
 		$("#day").empty().append(html);
+	}
+
+	function connect_year_age() {
+		var currYear = new Date().getFullYear(), 
+			$year = $("#year"), 
+			$age = $("#age");
+		$year.change(function() {
+			$age.val(currYear - $year.val());
+		});
+		$age.change(function () {
+			$year.val(currYear - $age.val());
+		})
 	}
 
 	function getNodeListHtml (nodeList) {
@@ -105,7 +125,8 @@ define(function(require, exports, module) {
 	}
 
 	function init_event () {
-		$("#year, #month").change(loadDate);
+		connect_year_age();
+		$("#year, #month, #age").change(loadDate);
 		$("#province").change(loadCity);
 		$("#city").change(loadTown);
 
@@ -123,8 +144,10 @@ define(function(require, exports, module) {
 		loadCity();
 		loadTown();
 
-		init_year();
+		var age = 90;
+		init_year(age);
 		init_month();
+		init_age(age);
 		loadDate();
 	}
 
