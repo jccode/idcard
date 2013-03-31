@@ -63,5 +63,24 @@
 
 
 	<script src="assert/seajs/sea.js" data-config="js/config" data-main="js/main"></script>
+
+	<!-- with seajs.use() function to include a module in page.
+	<script src="assert/seajs/sea.js"></script>
+	<script type="text/javascript">
+		seajs.use('./assert/js/config', function() {
+			seajs.use('./assert/js/main', function() {
+				seajs.use('./assert/libs/bootstrap');
+			});
+		});
+	</script>
+	-->
+	
+	<!-- without any other module loader, use the script directly.
+	<script src="assert/js/idcard.js"></script>
+	<script type="text/javascript">
+		console.log(idcard);
+	</script>
+	-->
+
 </body>
 </html>

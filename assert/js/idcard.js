@@ -10,7 +10,8 @@
 	}
 	// No module loader
 	else {
-		factory(function(){}, window['idcard']={}, {});
+		var namespace =  window['idcard'] = {};
+		factory(function(){}, namespace, {'exports': namespace});
 	}
 
 }(function(require, exports, module) {
@@ -284,6 +285,7 @@ function parseWithMsg (idCard) {
 	}
 }
 
+
 exports.getNodeNameByCode = getNodeNameByCode;
 exports.getLevel2Nodes = getLevel2Nodes;
 exports.getLevel3Nodes = getLevel3Nodes;
@@ -297,6 +299,12 @@ exports.parseWithMsg = parseWithMsg;
 exports.getData = function() {
 	return citys;
 }
+
+/* avoid this pattern, which can not work without module loader(directly include to html with script tag)
+module.exports = {
+	"getNodeNameByCode": getNodeNameByCode
+};
+*/
 
 }));
 
